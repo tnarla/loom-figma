@@ -28,7 +28,7 @@ function App() {
     // Show some error message on a wrong url
 
     const oembed: OInterface = await loom.oembed(url);
-
+    
     parent.postMessage(
       {
         pluginMessage: {
@@ -40,6 +40,7 @@ function App() {
       },
       "*"
     );
+
   }
 
   return (
