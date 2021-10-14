@@ -7,6 +7,7 @@ const {
   Image: WidgetImage,
   SVG,
   Frame,
+  useWidgetId
 } = widget;
 
 interface OEmbedData {
@@ -23,24 +24,50 @@ interface OEmbedData {
   duration: number;
 }
 
-const playIcon =
-  '<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#C4C4C4" fill-opacity="0.35"/><path d="M72 50.5L38.25 69.9856V31.0144L72 50.5Z" fill="black" fill-opacity="0.31"/></svg>';
+const playIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="102" height="102" viewBox="0 0 102 102" fill="none"><g filter="url(#filter0_d)"><rect x="15" y="11" width="72" height="72" rx="36" fill="white"/>
+  <g opacity="0.6">
+  <path d="M41 35.268V58.732C41 60.5212 43.0582 61.6083 44.6432 60.6344L63.9 48.9025C65.3667 48.0192 65.3667 45.9808 63.9 45.0749L44.6432 33.3656C43.0582 32.3917 41 33.4788 41 35.268Z" fill="#212121"/>
+  </g>
+  <rect x="12.5" y="8.5" width="77" height="77" rx="38.5" stroke="white" stroke-opacity="0.3" stroke-width="5"/>
+  </g>
+  <defs>
+  <filter id="filter0_d" x="0" y="0" width="102" height="102" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+  <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+  <feOffset dy="4"/>
+  <feGaussianBlur stdDeviation="5"/>
+  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"/>
+  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+  <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+  </filter>
+  </defs>
+  </svg>`;
 
+  
 function Widget() {
-  const [oembedData, setOembedData] = useSyncedState<OEmbedData>(
+  const [oembedData, setOembedData] = useSyncedState<OEmbedData | null>(
     "oembedData",
-    undefined
+    null
   );
+
+  const widgetNode = figma.getNodeById(useWidgetId()) as WidgetNode
+const iframe = {
+	// adjust offsets for your widget 
+	x: widgetNode.x + 8,
+	y: widgetNode.y - 32,
+}
 
   useEffect(() => {
     figma.ui.onmessage = (message) => {
-      console.log(message);
       if (message.type === "oembedData") {
         setOembedData(message.payload);
-        
+
         figma.ui.close();
+        figma.closePlugin();
       }
       if (message.type === "close") {
+
+        figma.ui.close();
         figma.closePlugin();
       }
     };
@@ -56,14 +83,20 @@ function Widget() {
       fill="#FFFFFF"
       cornerRadius={8}
       spacing={12}
-      onClick={async () => {
-        await new Promise<void>((resolve) => {
+      onClick={() =>
+        new Promise<void>((resolve) => {
           figma.showUI(
             __html__,
-            oembedData && {
-              width: oembedData.width / 2,
-              height: oembedData.height / 2,
-            }
+            oembedData
+              ? {
+                  width: oembedData.width / 2,
+                  height: oembedData.height / 2,
+                  position: {
+                    x: iframe.x,
+                    y: iframe.y
+                  }
+                }
+              : {height: 150, width: 400}
           );
 
           if (oembedData) {
@@ -74,23 +107,23 @@ function Widget() {
           } else {
             figma.ui.postMessage({ type: "addEmbedUrl" });
           }
-        });
-      }}
+        })
+      }
     >
-      {oembedData ? (
+      {oembedData !== null ? (
         <AutoLayout>
           <Frame
             // @ts-ignore
             fill={{ src: oembedData.thumbnail_url, type: "image" }}
-            width={oembedData.thumbnail_width / 2}
-            height={oembedData.thumbnail_height / 2}
+            width={oembedData.thumbnail_width / 3}
+            height={oembedData.thumbnail_height / 3}
           >
             <SVG
               src={playIcon}
-              width={74}
-              height={74}
-              x={oembedData.thumbnail_width / 4.5}
-              y={oembedData.thumbnail_height / 4.5}
+              width={102}
+              height={102}
+              x={oembedData.thumbnail_width / 7}
+              y={oembedData.thumbnail_height / 7}
             ></SVG>
           </Frame>
         </AutoLayout>

@@ -1,13 +1,11 @@
 {
   "name": "Loom",
-  "id": "10074075004744806089",
+  "id": "1027727649055917843",
   "api": "1.0.0",
-  "editorType": ["figjam"],
+  "widgetApi": "1.0.0",
   "containsWidget": true,
+  "editorType": ["figjam"],
   "main": "dist/code.js",
   "ui": "dist/index.html",
-  "permissions": [
-    "currentuser",   
-    "activeusers" 
-  ]
+  "permissions": ["currentuser", "activeusers"]
 }

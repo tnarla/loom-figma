@@ -1,7 +1,7 @@
 {
-  "name": "Loom",
+  "name": "loom",
   "version": "1.0.0",
-  "description": "WidgetTemplate",
+  "description": "A Loom Embed Widget in FigJam",
   "scripts": {
     "zip": "mkdir -p out && npm run build && zip -r out/create-widget-app.zip . -x node_modules/\\* -x plugin-typings/node_modules/\\* -x .\\* -x out/\\* -x plugin-typings/*.zip plugin-typings/.\\*",
     "format": "prettier --write .",
