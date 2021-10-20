@@ -74,8 +74,6 @@ function Widget() {
   const thumbnailWidth = oembedData.thumbnail_width / 3;
   const thumbnailHeight = oembedData.thumbnail_height / 3;
 
-  console.log(thumbnailHeight, thumbnailWidth);
-
   return (
     <AutoLayout
       direction="horizontal"
