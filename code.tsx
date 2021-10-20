@@ -7,7 +7,7 @@ const {
   Image: WidgetImage,
   SVG,
   Frame,
-  useWidgetId
+  useWidgetId,
 } = widget;
 
 interface OEmbedData {
@@ -43,19 +43,18 @@ const playIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="102" height="10
   </defs>
   </svg>`;
 
-  
 function Widget() {
   const [oembedData, setOembedData] = useSyncedState<OEmbedData | null>(
     "oembedData",
     null
   );
 
-  const widgetNode = figma.getNodeById(useWidgetId()) as WidgetNode
-const iframe = {
-	// adjust offsets for your widget 
-	x: widgetNode.x + 8,
-	y: widgetNode.y - 32,
-}
+  const widgetNode = figma.getNodeById(useWidgetId()) as WidgetNode;
+  const iframe = {
+    // adjust offsets for your widget
+    x: widgetNode.x + 8,
+    y: widgetNode.y - 32,
+  };
 
   useEffect(() => {
     figma.ui.onmessage = (message) => {
@@ -66,12 +65,12 @@ const iframe = {
         figma.closePlugin();
       }
       if (message.type === "close") {
-
         figma.ui.close();
         figma.closePlugin();
       }
     };
   });
+
 
   return (
     <AutoLayout
@@ -80,7 +79,7 @@ const iframe = {
       verticalAlignItems="center"
       height="hug-contents"
       padding={8}
-      fill="#FFFFFF"
+      fill={oembedData ? "#615CF5" : "#FFFFFF"}
       cornerRadius={8}
       spacing={12}
       onClick={() =>
@@ -93,10 +92,10 @@ const iframe = {
                   height: oembedData.height / 2,
                   position: {
                     x: iframe.x,
-                    y: iframe.y
-                  }
+                    y: iframe.y,
+                  },
                 }
-              : {height: 150, width: 400}
+              : { height: 150, width: 400 }
           );
 
           if (oembedData) {
@@ -113,6 +112,7 @@ const iframe = {
       {oembedData !== null ? (
         <AutoLayout>
           <Frame
+            padding={4}
             // @ts-ignore
             fill={{ src: oembedData.thumbnail_url, type: "image" }}
             width={oembedData.thumbnail_width / 3}
@@ -122,8 +122,8 @@ const iframe = {
               src={playIcon}
               width={102}
               height={102}
-              x={oembedData.thumbnail_width / 7}
-              y={oembedData.thumbnail_height / 7}
+              x={oembedData.thumbnail_width / 7.5}
+              y={oembedData.thumbnail_height / 7.5}
             ></SVG>
           </Frame>
         </AutoLayout>
