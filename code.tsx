@@ -49,6 +49,8 @@ function Widget() {
     null
   );
 
+  console.log(oembedData);
+
   const widgetNode = figma.getNodeById(useWidgetId()) as WidgetNode;
   const iframe = {
     // adjust offsets for your widget

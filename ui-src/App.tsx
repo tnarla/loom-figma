@@ -8,6 +8,7 @@ function App() {
   const [showiFrame, setShowiFrame] = useState(false);
   const [url, setUrl] = useState<string | undefined>();
   const [oembed, setOembed] = useState<OInterface | undefined>();
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     window.onmessage = (ev) => {
@@ -23,24 +24,26 @@ function App() {
   }, []);
 
   async function submitUrl() {
-    if (!url) return;
+    if (!url || !loom.validate.isLoomUrl(url)) {
+      setError(true);
+      return;
+    } else {
+      setError(false);
 
-    // Show some error message on a wrong url
+      const oembed: OInterface = await loom.oembed(url);
 
-    const oembed: OInterface = await loom.oembed(url);
-    
-    parent.postMessage(
-      {
-        pluginMessage: {
-          type: "oembedData",
-          payload: {
-            ...oembed,
+      parent.postMessage(
+        {
+          pluginMessage: {
+            type: "oembedData",
+            payload: {
+              ...oembed,
+            },
           },
         },
-      },
-      "*"
-    );
-
+        "*"
+      );
+    }
   }
 
   return (
@@ -48,7 +51,7 @@ function App() {
       {showiFrame ? (
         oembed && <div dangerouslySetInnerHTML={{ __html: oembed?.html }}></div>
       ) : (
-        <div className="flex flex-col items-end">
+        <div className="flex flex-col items-end space-y-2">
           <label className="block text-sm font-medium text-gray-700 w-full">
             Enter Loom share URL:
             <input
@@ -59,12 +62,22 @@ function App() {
             />
           </label>
 
-          <button
-            className="bg-[#615CF5] rounded py-2 px-3 text-white mt-3"
-            onClick={submitUrl}
-          >
-            Submit
-          </button>
+          <div className="flex space-between w-full">
+            <div className="flex-1">
+              {error && (
+                <div className="text-red-500 text-xs">
+                  Invalid Loom Share URL!
+                </div>
+              )}
+            </div>
+
+            <button
+              className="bg-[#615CF5] rounded py-2 px-3 text-white flex-shrink-0 align-right"
+              onClick={submitUrl}
+            >
+              Submit
+            </button>
+          </div>
         </div>
       )}
     </div>
