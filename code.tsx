@@ -71,8 +71,6 @@ function Widget() {
     };
   });
 
-  const thumbnailWidth = oembedData.thumbnail_width / 3;
-  const thumbnailHeight = oembedData.thumbnail_height / 3;
 
   return (
     <AutoLayout
@@ -95,7 +93,7 @@ function Widget() {
                   position: {
                     x: iframe.x,
                     y: iframe.y,
-                  },
+                  }
                 }
               : { height: 150, width: 400 }
           );
@@ -117,15 +115,15 @@ function Widget() {
             padding={4}
             // @ts-ignore
             fill={{ src: oembedData.thumbnail_url, type: "image" }}
-            width={thumbnailWidth}
-            height={thumbnailHeight}
+            width={oembedData.thumbnail_width / 3}
+            height={oembedData.thumbnail_height / 3}
           >
             <SVG
               src={playIcon}
               width={102}
               height={102}
-              x={(thumbnailWidth / 2) - 51}
-              y={(thumbnailHeight / 2) - 51}
+              x={((oembedData.thumbnail_width / 3) / 2) - 51}
+              y={((oembedData.thumbnail_height / 3) / 2) - 51}
             ></SVG>
           </Frame>
         </AutoLayout>
